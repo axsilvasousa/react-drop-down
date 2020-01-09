@@ -77,11 +77,19 @@
   ],
   "grade": [
     {
-      "produto": "",
+      "produto": {
+        "id": 4,
+        "descricao": "Banana",
+        "categoria_id": 1
+      },
       "id": 1
     },
     {
-      "produto": "",
+      "produto": {
+        "id": 2,
+        "descricao": "Manga",
+        "categoria_id": 1
+      },
       "id": 2
     },
     {
@@ -94,14 +102,18 @@
     },
     {
       "produto": {
-        "id": 2,
-        "descricao": "Manga",
-        "categoria_id": 1
+        "id": 9,
+        "descricao": "Skol",
+        "categoria_id": 3
       },
       "id": 4
     },
     {
-      "produto": "",
+      "produto": {
+        "id": 12,
+        "descricao": "Brahma",
+        "categoria_id": 3
+      },
       "id": 5
     },
     {

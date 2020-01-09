@@ -23,12 +23,19 @@ class DragDrop extends React.Component {
         let escolhidos = []
         let grades = await GradeService.fetch()
         grades.forEach(element => {
-            escolhidos.push({ produto: element.produto })
+            console.log("grade", element.produto.id)
+            escolhidos.push(element.produto.id)
         })
         this.setState({ grades, escolhidos })
     }
     async getProdutos(id) {
+        await this.getGrades()
+        let { escolhidos } = this.state
         let produtos = await ProdutoService.fetch(id || undefined)
+        produtos = produtos.filter(produto => {
+            console.log(produto, escolhidos)
+            return escolhidos.includes(produto.id) === false
+        })
         this.setState({ produtos })
     }
 
