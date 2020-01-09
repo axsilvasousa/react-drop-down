@@ -19,7 +19,7 @@ body {
     padding: 10px;
     display: table;
     width: 65%;
-    float: left;
+    float: right;
     min-height: 100vh;
 }
 .grade > .item {
@@ -37,17 +37,25 @@ body {
     padding: 10px;
     display: table;
     width: 30%;
-    float: right;
+    float: left;
 }
 .produtos-item {
     padding: 5px;
     border-radius: 5px;
     border: solid 1px #009;
+    width: 140px;
+    text-align: center;
+    float: left;
+    margin-right: 10px;
 }
-
 .produtos .produtos-item {
     margin-bottom: 10px;
 }
+.grade .produtos-item {
+    float: none;
+    margin-right: none;
+}
+
 .clear5 {
     height: 5px;
     width: 100%;

@@ -121,7 +121,6 @@ class DragDrop extends React.Component {
             <div className="container">
                 <h1 className="title-page">Drop & Down</h1>
                 <div>
-                    <div className="grade">{this.renderGrades()}</div>
                     <div className="produtos">
                         <p>Selecione a categoria</p>
                         <div className="clear5"></div>
@@ -136,6 +135,7 @@ class DragDrop extends React.Component {
 
                         {this.renderProdutos()}
                     </div>
+                    <div className="grade">{this.renderGrades()}</div>
                 </div>
             </div>
         )

@@ -81,11 +81,7 @@
       "id": 1
     },
     {
-      "produto": {
-        "id": 2,
-        "descricao": "Manga",
-        "categoria_id": 1
-      },
+      "produto": "",
       "id": 2
     },
     {
@@ -97,7 +93,11 @@
       "id": 3
     },
     {
-      "produto": "",
+      "produto": {
+        "id": 2,
+        "descricao": "Manga",
+        "categoria_id": 1
+      },
       "id": 4
     },
     {
