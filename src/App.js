@@ -139,8 +139,9 @@ class DragDrop extends React.Component {
                             </select>
                         </div>
                         <div className="clear15"></div>
-
-                        {this.renderProdutos()}
+                        <div className="produtos_wrap">
+                            <div className="produtos_scrol">{this.renderProdutos()}</div>
+                        </div>
                     </div>
                     <div className="grade">{this.renderGrades()}</div>
                 </div>
