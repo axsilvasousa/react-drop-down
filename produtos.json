@@ -78,16 +78,16 @@
   "grade": [
     {
       "produto": {
-        "id": 4,
-        "descricao": "Banana",
+        "id": 1,
+        "descricao": "Laranja",
         "categoria_id": 1
       },
       "id": 1
     },
     {
       "produto": {
-        "id": 2,
-        "descricao": "Manga",
+        "id": 3,
+        "descricao": "Maça",
         "categoria_id": 1
       },
       "id": 2
@@ -110,17 +110,17 @@
     },
     {
       "produto": {
-        "id": 12,
-        "descricao": "Brahma",
+        "id": 10,
+        "descricao": "Lokal",
         "categoria_id": 3
       },
       "id": 5
     },
     {
       "produto": {
-        "id": 3,
-        "descricao": "Maça",
-        "categoria_id": 1
+        "id": 7,
+        "descricao": "Fanta laranja",
+        "categoria_id": 2
       },
       "id": 6
     }

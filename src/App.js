@@ -8,22 +8,22 @@ class DragDrop extends React.Component {
         produtos: [],
         categorias: [],
         grades: [],
-        escolhidos: []
+        escolhidos: [],
+        width: 100,
+        category: ""
     }
 
     async componentDidMount() {
         await this.getGrades()
         let categorias = await ProdutoService.categorias()
         let produtos = await ProdutoService.fetch()
-        console.log(this.state.escolhidos)
-        this.setState({ produtos, categorias })
+        this.setState({ produtos, categorias, width: produtos.length * 150 })
     }
 
     async getGrades() {
         let escolhidos = []
         let grades = await GradeService.fetch()
         grades.forEach(element => {
-            console.log("grade", element.produto.id)
             escolhidos.push(element.produto.id)
         })
         this.setState({ grades, escolhidos })
@@ -33,10 +33,10 @@ class DragDrop extends React.Component {
         let { escolhidos } = this.state
         let produtos = await ProdutoService.fetch(id || undefined)
         produtos = produtos.filter(produto => {
-            console.log(produto, escolhidos)
             return escolhidos.includes(produto.id) === false
         })
-        this.setState({ produtos })
+
+        this.setState({ produtos, width: produtos.length * 150, category: id })
     }
 
     onDragStart = (e, v) => {
@@ -65,8 +65,20 @@ class DragDrop extends React.Component {
 
             await GradeService.update(grade_id, data)
             grades = await GradeService.fetch()
-            this.setState({ grades, produtos })
+            this.setState({ grades, produtos, width: produtos.length * 150 })
         }
+    }
+
+    onDropExclude = async e => {
+        e.preventDefault()
+        let { grades, category } = this.state
+        let data = e.dataTransfer.getData("text/plain")
+        data = JSON.parse(data)
+        let check = grades.find(element => element.produto.id === data.id)
+        if (check !== undefined) {
+            await GradeService.update(check.id, "")
+        }
+        this.getProdutos(category)
     }
 
     renderGrades() {
@@ -80,7 +92,7 @@ class DragDrop extends React.Component {
                     onDragOver={this.allowDrop}
                     onDrop={this.onDrop}
                 >
-                    {grade.produto ? (
+                    {grade.produto && (
                         <div
                             className="produtos-item"
                             key={`pro_${grade.produto.id}`}
@@ -89,8 +101,6 @@ class DragDrop extends React.Component {
                         >
                             {grade.produto.descricao}
                         </div>
-                    ) : (
-                        ""
                     )}
                 </div>
             )
@@ -109,6 +119,7 @@ class DragDrop extends React.Component {
 
     renderProdutos() {
         let { produtos } = this.state
+
         return produtos.map(produto => {
             return (
                 <div
@@ -127,8 +138,12 @@ class DragDrop extends React.Component {
         return (
             <div className="container">
                 <h1 className="title-page">Drop & Down</h1>
-                <div>
-                    <div className="produtos">
+                <div style={{ padding: "10px" }}>
+                    <div
+                        className="produtos"
+                        onDragOver={this.allowDrop}
+                        onDrop={this.onDropExclude}
+                    >
                         <p>Selecione a categoria</p>
                         <div className="clear5"></div>
 
@@ -140,7 +155,9 @@ class DragDrop extends React.Component {
                         </div>
                         <div className="clear15"></div>
                         <div className="produtos_wrap">
-                            <div className="produtos_scrol">{this.renderProdutos()}</div>
+                            <div className="produtos_scrol" style={{ width: this.state.width }}>
+                                {this.renderProdutos()}
+                            </div>
                         </div>
                     </div>
                     <div className="grade">{this.renderGrades()}</div>
