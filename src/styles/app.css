@@ -35,7 +35,7 @@ body {
 .produtos {
     border: solid 1px #900;
     padding: 10px;
-    display: table;
+    display: block;
     width: 30%;
     float: left;
 }
@@ -52,6 +52,11 @@ body {
 .produtos .produtos-item {
     margin-bottom: 10px;
 }
+
+.produtos .produtos_scrol {
+    max-width: 100%;
+}
+
 .grade .produtos-item {
     float: none;
     margin-right: none;
