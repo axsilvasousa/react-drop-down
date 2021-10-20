@@ -1,170 +1,81 @@
-import React from "react"
-import "./styles"
-import ProdutoService from "./services/Produtos"
-import GradeService from "./services/Grades"
+import logo from './logo.svg';
+import './App.css';
+import { useState } from 'react';
+import * as C from "./components"
 
-class DragDrop extends React.Component {
-    state = {
-        produtos: [],
-        categorias: [],
-        grades: [],
-        escolhidos: [],
-        width: 100,
-        category: ""
+const listComponent = [
+  "Entrevista",
+  "Data",
+  "Hora"
+]
+
+
+function App() {
+  const [selected,setSelected] = useState([])
+  const allowDrop = ev => {
+    ev.preventDefault()
+  }
+
+  const onDragStart = (e,item,type)=>{
+    console.log("onDragStart",e,item)
+    e.dataTransfer.dropEffect = "move"
+    e.dataTransfer.setData("text/plain", JSON.stringify({item,type}))
+  }
+
+  const onDropExclude = (e)=>{
+    e.preventDefault()
+    let textPlain = e.dataTransfer.getData("text/plain")
+    let data = JSON.parse(textPlain);
+    const newSelected = selected.filter(item=>item != data.item)
+    setSelected(newSelected || [])
+  }
+
+  const onDrop = e => {
+    let textPlain = e.dataTransfer.getData("text/plain")
+    let data = JSON.parse(textPlain);
+    if(data.type !== "preview"){
+      const newSelected = selected.filter(item=>item != data.item)
+      setSelected([...newSelected,data.item])
     }
+  }
 
-    async componentDidMount() {
-        await this.getGrades()
-        let categorias = await ProdutoService.categorias()
-        let produtos = await ProdutoService.fetch()
-        this.setState({ produtos, categorias, width: produtos.length * 150 })
-    }
 
-    async getGrades() {
-        let escolhidos = []
-        let grades = await GradeService.fetch()
-        grades.forEach(element => {
-            escolhidos.push(element.produto.id)
-        })
-        this.setState({ grades, escolhidos })
-    }
-    async getProdutos(id) {
-        await this.getGrades()
-        let { escolhidos } = this.state
-        let produtos = await ProdutoService.fetch(id || undefined)
-        produtos = produtos.filter(produto => {
-            return escolhidos.includes(produto.id) === false
-        })
+  const RenderComponent = (component)=>{
+    const Cmp = C[component]
+    return <div data-type="component" style={{border:"solid 1px #e1e1e1", padding:"10px",cursor:"move"}} 
+      draggable="true" 
+      onDragStart={e => onDragStart(e,component,"preview")} >
+      <Cmp />
+    </div>
+  }
+  return (
+    <div className="App">
+     <div id="previewComponent" className="previewComponent" 
+      onDragOver={allowDrop}
+      onDrop={onDrop}
+     >
+       {selected.map(Component=>RenderComponent(Component) )}
 
-        this.setState({ produtos, width: produtos.length * 150, category: id })
-    }
+     </div>
 
-    onDragStart = (e, v) => {
-        e.dataTransfer.dropEffect = "move"
-        e.dataTransfer.setData("text/plain", v)
-    }
+     <div className="listComponent"
+      onDragOver={allowDrop}
+      onDrop={onDropExclude}
+     >
+        <ul>
+          {listComponent.map(item=>(
+            <li 
+            draggable="true"
+            onDragStart={e => onDragStart(e,item,"selected")}
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
+     </div>
 
-    allowDrop = ev => {
-        ev.preventDefault()
-        console.log(ev.target)
-    }
-
-    onDrop = async e => {
-        e.preventDefault()
-        let { grades, produtos } = this.state
-        let grade_id = e.target.id.replace("item_", "")
-        if (grade_id) {
-            let data = e.dataTransfer.getData("text/plain")
-            data = JSON.parse(data)
-
-            let check = grades.find(element => element.produto.id === data.id)
-            if (check !== undefined) {
-                await GradeService.update(check.id, "")
-            }
-            produtos = produtos.filter(element => element.id !== data.id)
-
-            await GradeService.update(grade_id, data)
-            grades = await GradeService.fetch()
-            this.setState({ grades, produtos, width: produtos.length * 150 })
-        }
-    }
-
-    onDropExclude = async e => {
-        e.preventDefault()
-        let { grades, category } = this.state
-        let data = e.dataTransfer.getData("text/plain")
-        data = JSON.parse(data)
-        let check = grades.find(element => element.produto.id === data.id)
-        if (check !== undefined) {
-            await GradeService.update(check.id, "")
-        }
-        this.getProdutos(category)
-    }
-
-    renderGrades() {
-        let { grades } = this.state
-        return grades.map(grade => {
-            return (
-                <div
-                    className="item"
-                    key={`item_${grade.id}`}
-                    id={`item_${grade.id}`}
-                    onDragOver={this.allowDrop}
-                    onDrop={this.onDrop}
-                >
-                    {grade.produto && (
-                        <div
-                            className="produtos-item"
-                            key={`pro_${grade.produto.id}`}
-                            draggable="true"
-                            onDragStart={e => this.onDragStart(e, JSON.stringify(grade.produto))}
-                        >
-                            {grade.produto.descricao}
-                        </div>
-                    )}
-                </div>
-            )
-        })
-    }
-    renderCategorias() {
-        let { categorias } = this.state
-        return categorias.map(cat => {
-            return (
-                <option key={`opt_${cat.id}`} value={cat.id}>
-                    {cat.descricao}
-                </option>
-            )
-        })
-    }
-
-    renderProdutos() {
-        let { produtos } = this.state
-
-        return produtos.map(produto => {
-            return (
-                <div
-                    className="produtos-item"
-                    key={`pro_${produto.id}`}
-                    draggable="true"
-                    onDragStart={e => this.onDragStart(e, JSON.stringify(produto))}
-                >
-                    {produto.descricao}
-                </div>
-            )
-        })
-    }
-
-    render() {
-        return (
-            <div className="container">
-                <h1 className="title-page">Drop & Down</h1>
-                <div style={{ padding: "10px" }}>
-                    <div
-                        className="produtos"
-                        onDragOver={this.allowDrop}
-                        onDrop={this.onDropExclude}
-                    >
-                        <p>Selecione a categoria</p>
-                        <div className="clear5"></div>
-
-                        <div className="select">
-                            <select onChange={v => this.getProdutos(v.target.value)}>
-                                <option value="">Todos</option>
-                                {this.renderCategorias()}
-                            </select>
-                        </div>
-                        <div className="clear15"></div>
-                        <div className="produtos_wrap">
-                            <div className="produtos_scrol" style={{ width: this.state.width }}>
-                                {this.renderProdutos()}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="grade">{this.renderGrades()}</div>
-                </div>
-            </div>
-        )
-    }
+    </div>
+  );
 }
 
-export default DragDrop
+export default App;
